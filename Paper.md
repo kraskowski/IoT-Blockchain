@@ -26,3 +26,20 @@ The code for the backend is organized into several Go packages, including `mqtt`
 
 The code for the frontend is organized using the React application template. The frontend provides a user-friendly interface for connecting to the MQTT broker, subscribing to topics, sending test messages,
  
+# References
+
+1. Atzori, L., Iera, A., & Morabito, G. (2010). The internet of things: A survey. Computer networks, 54(15), 2787-2805.
+
+2. Christidis, K., & Devetsikiotis, M. (2016). Blockchains and smart contracts for the internet of things. IEEE Access, 4, 2292-2303.
+
+3. Li, S., Xu, L. D., & Zhao, S. (2015). The internet of things: a survey. Information systems frontiers, 17(2), 243-259.
+
+4. Tosh, D., Davey, J., & Sikora, A. (2017). Securing the internet of things. IEEE Security & Privacy, 15(6), 56-66.
+
+5. Zheng, Z., Xie, S., Dai, H. N., Chen, W., & Wang, H. (2018). An overview of blockchain technology: architecture, consensus, and future trends. In 2018 IEEE international congress on big data (BigData congress) (pp. 557-564). IEEE.
+
+6. Ethereum. (2023). Solidity documentation. Retrieved February 14, 2023, from https://solidity.readthedocs.io/en/latest/
+
+7. Hyperledger. (2023). Hyperledger Fabric documentation. Retrieved February 14, 2023, from https://hyperledger-fabric.readthedocs.io/en/latest/
+
+8. GitHub. (2023). GitHub documentation. Retrieved February 14, 2023, from https://docs.github.com/
