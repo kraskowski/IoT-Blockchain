@@ -8,20 +8,19 @@ for /f "delims=" %%f in ('powershell.exe -Command "Add-Type -AssemblyName System
   set "files=!files! "%%f""
 )
 if not defined files (
-  echo No files selected.
-  goto end
+    echo No files selected.
+    goto :eof
 )
 
-REM Prompt user for prefix
-set /p prefix=Enter prefix:
+REM Prompt the user to enter the prefix
+set /p "prefix=Enter a prefix: "
 
-REM Rename files with prefix
+REM Rename the files with the prefix
 for %%f in (%files%) do (
-  set "name=%%~nxf"
-  set "dir=%%~dpf"
-  ren "%%f" "%prefix%!name!"
+    set "filename=%%~nxf"
+    ren "%%~f" "%prefix%!filename!"
 )
 
-echo Done!
-: end
+echo Files renamed with prefix "%prefix%".
+
 pause
