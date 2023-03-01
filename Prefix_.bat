@@ -1,27 +1,45 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal enabledelayedexpansion
 
-REM Use PowerShell to prompt user to select files
-echo Please select the files to rename:
+set "prefix="
+
+echo Select files to add prefix to:
 set "files="
-for /f "delims=" %%f in ('powershell.exe -Command "Add-Type -AssemblyName System.Windows.Forms; $ofd = New-Object System.Windows.Forms.OpenFileDialog; $ofd.Multiselect = $true; $ofd.Filter = 'All files (*.*)|*.*'; $null = $ofd.ShowDialog(); $ofd.FileNames"') do (
-  set "files=!files! "%%f""
+for %%I in (.) do set "defaultFolder=%%~fI"
+pushd "%defaultFolder%" && (
+  set "filter="
+  set "title=Select files to add prefix to"
+  set "button=Add prefix"
+  set "options="
+  set "count=0"
+  for /f "delims=" %%F in ('powershell.exe -noprofile "iex (${%~f0} | out-string)"') do (
+    if "%%~F"=="<Break>" goto :cancel
+    if defined files set "files=!files!,"
+    set /a "count+=1"
+    set "files=!files!"%%~F""
+  )
+  popd
 )
+
 if not defined files (
   echo No files selected.
-  goto end
+  pause
+  exit /b
 )
 
-REM Prompt user for prefix
-set /p prefix=Enter prefix:
+set /p "prefix=Enter prefix: "
 
-REM Rename files with prefix
-for %%f in (%files%) do (
-  set "name=%%~nxf"
-  set "dir=%%~dpf"
-  ren "%%f" "%prefix%!name!"
+for %%F in (%files%) do (
+  set "name=%%~nxF"
+  ren "%%F" "!prefix!!name!"
 )
 
-echo Done!
-: end
+echo Prefix added successfully.
 pause
+exit /b
+
+:cancel
+popd
+echo User cancelled.
+pause
+exit /b
