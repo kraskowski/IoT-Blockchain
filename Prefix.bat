@@ -1,27 +1,24 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal enabledelayedexpansion
 
-REM Use PowerShell to prompt user to select files
-echo Please select the files to rename:
+REM Open file selection dialog
 set "files="
-for /f "delims=" %%f in ('powershell.exe -Command "Get-ChildItem -Path . -Filter *.txt -File | Select-Object -ExpandProperty FullName"') do (
-  set "files=!files! "%%f""
-)
-if not defined files (
-  echo No files selected.
-  goto end
+for %%i in (.) do set "defaultFolder=%%~fi"
+set "dialog=%SystemRoot%\System32\WScript.exe //nologo %SystemRoot%\System32\%~n0.vbs"
+for /f "delims=" %%i in ('%dialog% "%defaultFolder%" "Select Files" "All Files|*.*|Text Files|*.txt;*.log" /multiselect') do (
+  if not defined files (set "files=%%i") else (set "files=!files!;"%%i"")
 )
 
-REM Prompt user for prefix
+REM Ask for prefix
 set /p prefix=Enter prefix:
 
-REM Rename files with prefix
-for %%f in (%files%) do (
-  set "name=%%~nxf"
-  set "dir=%%~dpf"
-  ren "%%f" "%prefix%!name!"
+REM Add prefix to file names
+for %%i in (%files%) do (
+  set "filename=%%i"
+  for /f "delims=" %%j in ("!filename!") do (
+    ren "%%~j" "%prefix%%%~nxj"
+  )
 )
 
-echo Done!
-: end
+echo Prefix added to file names.
 pause
