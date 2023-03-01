@@ -1,45 +1,37 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal EnableDelayedExpansion
 
-set "prefix="
-
-echo Select files to add prefix to:
+REM Prompt the user to select files
 set "files="
-for %%I in (.) do set "defaultFolder=%%~fI"
-pushd "%defaultFolder%" && (
-  set "filter="
-  set "title=Select files to add prefix to"
-  set "button=Add prefix"
-  set "options="
-  set "count=0"
-  for /f "delims=" %%F in ('powershell.exe -noprofile "iex (${%~f0} | out-string)"') do (
-    if "%%~F"=="<Break>" goto :cancel
-    if defined files set "files=!files!,"
-    set /a "count+=1"
-    set "files=!files!"%%~F""
-  )
-  popd
+echo Please select files to rename:
+echo.
+set "vbsfile=%temp%\_.vbs"
+>"%vbsfile%" echo set WshShell=WScript.CreateObject("WScript.Shell") 
+>>"%vbsfile%" echo set oExec=WshShell.Exec("mshta.exe ""about:<input type=file id=FILE><script>FILE.click();new ActiveXObject('Scripting.FileSystemObject').GetStandardStream(1).WriteLine(FILE.value);close();resizeTo(0,0);</script>""") 
+>>"%vbsfile%" echo Do While oExec.Status = 0 : WScript.Sleep 100 : Loop 
+>>"%vbsfile%" echo WScript.StdOut.WriteLine oExec.StdOut.ReadAll 
+set "filelist=%temp%\_.filelist"
+for /f "delims=" %%f in ('cscript //nologo "%vbsfile%"') do (
+    set "file=%%~f"
+    if defined file (
+        set "files=!files! "%%~f""
+        echo - "%%~f"
+    )
 )
-
 if not defined files (
-  echo No files selected.
-  pause
-  exit /b
+    echo No files selected.
+    goto :eof
 )
 
-set /p "prefix=Enter prefix: "
+REM Prompt the user to enter the prefix
+set /p "prefix=Enter a prefix: "
 
-for %%F in (%files%) do (
-  set "name=%%~nxF"
-  ren "%%F" "!prefix!!name!"
+REM Rename the files with the prefix
+for %%f in (%files%) do (
+    set "filename=%%~nxf"
+    ren "%%~f" "%prefix%!filename!"
 )
 
-echo Prefix added successfully.
-pause
-exit /b
+echo Files renamed with prefix "%prefix%".
 
-:cancel
-popd
-echo User cancelled.
 pause
-exit /b
